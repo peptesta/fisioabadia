@@ -1,5 +1,5 @@
 const Conditions = () => {
-  const leftConditions = [
+  /*const leftConditions = [
     'Fascite plantare',
     'Distorsioni',
     'Tendiniti',
@@ -20,7 +20,7 @@ const Conditions = () => {
     'Ernia del disco',
     'Dolore lombare',
     'Osteoartrite',
-  ];
+  ];*/
 
   return (
     <section className="py-16 md:py-24 bg-white">
