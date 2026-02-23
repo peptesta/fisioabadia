@@ -5,7 +5,7 @@ import { inspectAttr } from 'kimi-plugin-inspect-react'
 
 // https://vite.dev/config/ 
 export default defineConfig({
-  base: './',
+  base: '/',
   plugins: [inspectAttr(), react()],
   resolve: {
     alias: {
@@ -18,7 +18,7 @@ export default defineConfig({
     strictPort: true,
     allowedHosts: ['unfound-clayton-felicitously.ngrok-free.app'], // nota: .app non .dev
   },
-  // Vercel:
+  // AGGIUNGI QUESTO per Vercel:
   preview: {
     port: 4173,
     strictPort: true,
