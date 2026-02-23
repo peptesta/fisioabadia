@@ -1,6 +1,5 @@
 import Navbar from './sections/Navbar';
 import Hero from './sections/Hero';
-import Intro from './sections/Intro';
 import Fisioterapia from './sections/Fisioterapia';
 import Conditions from './sections/Conditions';
 import Treatments from './sections/Tratamientos';
@@ -19,7 +18,6 @@ function App() {
     <div className="min-h-screen bg-white">
       <Navbar />
       <Hero />
-      <Intro />
       <Fisioterapia />
       <Conditions />
       <Treatments />
