@@ -3,7 +3,7 @@ import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import { inspectAttr } from 'kimi-plugin-inspect-react'
 
-// https://vite.dev/config/
+// https://vite.dev/config/ 
 export default defineConfig({
   base: './',
   plugins: [inspectAttr(), react()],
@@ -13,9 +13,18 @@ export default defineConfig({
     },
   },
   server: {
-    host: true, // espone il server sulla rete
-    port: 5173, // porta del tuo server Vite
+    host: true,
+    port: 5173,
     strictPort: true,
-    allowedHosts: ['unfound-clayton-felicitously.ngrok-free.dev'], // permette solo questo host ngrok
+    allowedHosts: ['unfound-clayton-felicitously.ngrok-free.app'], // nota: .app non .dev
   },
-});
+  // Vercel:
+  preview: {
+    port: 4173,
+    strictPort: true,
+  },
+  build: {
+    outDir: 'dist',
+    sourcemap: true,
+  },
+})
