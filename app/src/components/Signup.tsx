@@ -38,7 +38,8 @@ const Signup = () => {
         if (result.success) {
             navigate('/');
         } else {
-            console.error('Errore durante la registrazione:', result);
+            console.error('Errore durante la registrazione:', result.error);
+            setError(result.error.message);
         }
     }catch(error){
         console.error('Errore durante la registrazione:', error);
