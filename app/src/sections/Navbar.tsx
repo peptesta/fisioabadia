@@ -20,6 +20,7 @@ const Navbar = () => {
     { name: 'METODO', href: '#metodo' },
     { name: 'BLOG', href: '#blog' },
     { name: 'CONTATTO', href: '#contacto' },
+    { name: 'Registrati', href: '/signup' },
   ];
 
   return (
