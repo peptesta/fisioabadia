@@ -34,7 +34,17 @@ const Signup = () => {
             console.error('Errore: signUpNewUser non disponibile');
             return;
         }
-        const result = await signUpNewUser(formData.email, formData.password);
+        const result = await signUpNewUser(
+            formData.email, 
+            formData.password,
+            {
+                data: {
+                    firstName: formData.firstName,
+                    lastName: formData.lastName,
+                    phone: formData.phone,
+                }
+            }
+        );
         if (result.success) {
             navigate('/');
         } else {

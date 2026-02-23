@@ -1,9 +1,19 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
+import { UserAuth } from '../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
+
+// Definisci il tipo per i link
+type NavLink = 
+  | { name: string; href: string; hasDropdown?: boolean; isButton?: never; onClick?: never }
+  | { name: string; href: string; isButton: true; onClick: () => void | Promise<void>; hasDropdown?: never };
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  const { session, signOutUser } = UserAuth() || {};
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,15 +23,27 @@ const Navbar = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const navLinks = [
+  const handleLogout = async () => {
+    await signOutUser?.();
+    navigate('/');
+  };
+
+  // Link base
+  const baseNavLinks: NavLink[] = [
     { name: 'INIZIO', href: '#inicio' },
     { name: 'BUONO REGALO', href: '#bono' },
     { name: 'SERVIZI', href: '#servicios', hasDropdown: true },
     { name: 'METODO', href: '#metodo' },
     { name: 'BLOG', href: '#blog' },
     { name: 'CONTATTO', href: '#contacto' },
-    { name: 'Registrati', href: '/signup' },
   ];
+
+  // Link auth
+  const authLink: NavLink = session
+    ? { name: 'LOGOUT', href: '#', isButton: true, onClick: handleLogout }
+    : { name: 'LOGIN/REGISTRATI', href: '/signup' };
+
+  const navLinks: NavLink[] = [...baseNavLinks, authLink];
 
   return (
     <nav
@@ -60,17 +82,29 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden lg:flex items-center space-x-6">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className={`text-xs font-medium tracking-wider transition-colors hover:text-[#C9A962] flex items-center gap-1 ${
-                  isScrolled ? 'text-gray-700' : 'text-white'
-                } ${link.name === 'SERVICIOS' ? 'text-[#C9A962]' : ''}`}
-              >
-                {link.name}
-                {link.hasDropdown && <ChevronDown className="w-3 h-3" />}
-              </a>
+            {navLinks.map((link, index) => (
+              'isButton' in link && link.isButton ? (
+                <button
+                  key={index}
+                  onClick={link.onClick}
+                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#C9A962] ${
+                    isScrolled ? 'text-gray-700' : 'text-white'
+                  }`}
+                >
+                  {link.name}
+                </button>
+              ) : (
+                <a
+                  key={index}
+                  href={link.href}
+                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#C9A962] flex items-center gap-1 ${
+                    isScrolled ? 'text-gray-700' : 'text-white'
+                  } ${link.name === 'SERVIZI' ? 'text-[#C9A962]' : ''}`}
+                >
+                  {link.name}
+                  {link.hasDropdown && <ChevronDown className="w-3 h-3" />}
+                </a>
+              )
             ))}
           </div>
 
@@ -98,15 +132,28 @@ const Navbar = () => {
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden bg-white shadow-lg rounded-lg mt-2 py-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.name}
-                href={link.href}
-                className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#C9A962] transition-colors"
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                {link.name}
-              </a>
+            {navLinks.map((link, index) => (
+              'isButton' in link && link.isButton ? (
+                <button
+                  key={index}
+                  onClick={() => {
+                    link.onClick?.();
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-left px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#C9A962] transition-colors"
+                >
+                  {link.name}
+                </button>
+              ) : (
+                <a
+                  key={index}
+                  href={link.href}
+                  className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#C9A962] transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  {link.name}
+                </a>
+              )
             ))}
           </div>
         )}
