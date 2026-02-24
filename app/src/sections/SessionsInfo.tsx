@@ -11,6 +11,7 @@ const SessionsInfo = () => {
       bgColor: 'bg-[#1b4965]', // Yale Blue - deep and sophisticated
       textColor: 'text-white',
       buttonVariant: 'outline' as const,
+      buttonClass: 'border-white text-white hover:bg-white/20',
     },
     {
       title: 'DOLORE ALLA SCHIENA E INFORTUNI',
@@ -20,6 +21,7 @@ const SessionsInfo = () => {
       bgColor: 'bg-[#5fa8d3]', // Fresh Sky - vivid and optimistic
       textColor: 'text-white',
       buttonVariant: 'outline' as const,
+      buttonClass: 'border-white text-white hover:bg-white/20',
     },
     {
       title: 'RIABILITAZIONE E PREVENZIONE',
@@ -30,6 +32,7 @@ const SessionsInfo = () => {
       bgColor: 'bg-[#cae9ff]', // Pale Sky - soft and airy
       textColor: 'text-[#1b4965]',
       buttonVariant: 'default' as const,
+      buttonClass: 'bg-[#1b4965] hover:bg-[#2a5a7a] text-white shadow-md',
     },
     {
       title: 'ALLENATI BENE',
@@ -39,6 +42,7 @@ const SessionsInfo = () => {
       bgColor: 'bg-[#62b6cb]', // Pacific Blue - bright and invigorating
       textColor: 'text-white',
       buttonVariant: 'outline' as const,
+      buttonClass: 'border-white text-white hover:bg-white/20',
     },
   ];
 
@@ -85,11 +89,7 @@ const SessionsInfo = () => {
               </p>
               <Button
                 variant={feature.buttonVariant}
-                className={`mt-4 text-xs tracking-widest rounded-md ${
-                  feature.buttonVariant === 'outline'
-                    ? 'border-white text-white hover:bg-white/20'
-                    : 'bg-[#5fa8d3] hover:bg-[#62b6cb] text-white shadow-md'
-                }`}
+                className={`mt-4 text-xs tracking-widest rounded-md ${feature.buttonClass}`}
               >
                 MAGGIORI INFO
                 <ArrowRight className="w-3 h-3 ml-1" />

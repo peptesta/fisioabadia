@@ -96,7 +96,7 @@ const Navbar = () => {
                   href={link.href}
                   className={`text-xs font-medium tracking-wider transition-colors hover:text-[#5fa8d3] flex items-center gap-1 ${
                     isScrolled ? 'text-[#1b4965]' : 'text-white'
-                  } ${link.name === 'SERVIZI' ? 'text-[#62b6cb]' : ''}`}
+                  }`}
                 >
                   {link.name}
                   {link.hasDropdown && <ChevronDown className="w-3 h-3" />}
