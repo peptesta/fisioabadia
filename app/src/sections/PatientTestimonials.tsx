@@ -26,41 +26,41 @@ const PatientTestimonials = () => {
   ];
 
   return (
-    <section className="py-16 md:py-24 bg-[#F5F5F5]">
+    <section className="py-16 md:py-24 bg-[#cae9ff]/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-4">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#1b4965] text-center mb-4">
           I NOSTRI PAZIENTI
         </h2>
-        <div className="flex justify-center mb-12">
+        <div className="flex justify-center mb-12 gap-1">
           {[...Array(5)].map((_, i) => (
-            <Star key={i} className="w-6 h-6 fill-[#C9A962] text-[#C9A962]" />
+            <Star key={i} className="w-6 h-6 fill-[#5fa8d3] text-[#5fa8d3]" />
           ))}
         </div>
 
         {/* Testimonial Cards */}
         <div className="grid md:grid-cols-3 gap-8 mb-12">
           {testimonials.map((testimonial, index) => (
-            <div key={index} className="text-center">
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+            <div key={index} className="text-center bg-white p-6 rounded-lg shadow-lg shadow-[#1b4965]/5 hover:shadow-xl hover:shadow-[#1b4965]/10 transition-shadow duration-300">
+              <h3 className="text-lg font-semibold text-[#1b4965] mb-2">
                 {testimonial.title}
               </h3>
               {testimonial.subtitle && (
-                <p className="text-xs text-gray-500 mb-4">
+                <p className="text-xs text-[#1b4965]/60 mb-4">
                   {testimonial.subtitle}
                 </p>
               )}
-              <div className="flex justify-center mb-4">
+              <div className="flex justify-center mb-4 gap-0.5">
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <Star
                     key={i}
-                    className="w-4 h-4 fill-[#C9A962] text-[#C9A962]"
+                    className="w-4 h-4 fill-[#62b6cb] text-[#62b6cb]"
                   />
                 ))}
               </div>
-              <p className="text-sm text-gray-600 leading-relaxed mb-4 italic">
+              <p className="text-sm text-[#1b4965]/70 leading-relaxed mb-4 italic">
                 {testimonial.text}
               </p>
-              <p className="text-sm font-medium text-gray-800">
+              <p className="text-sm font-medium text-[#5fa8d3]">
                 {testimonial.author}
               </p>
             </div>
@@ -71,7 +71,7 @@ const PatientTestimonials = () => {
         <div className="text-center">
           <Button
             variant="default"
-            className="bg-[#C9A962] hover:bg-[#B8994F] text-white text-xs tracking-widest px-8 py-3 rounded-sm"
+            className="bg-[#5fa8d3] hover:bg-[#62b6cb] text-white text-xs tracking-widest px-8 py-3 rounded-md shadow-lg shadow-[#5fa8d3]/30 transition-all hover:shadow-xl hover:shadow-[#5fa8d3]/40 hover:-translate-y-0.5"
           >
             PRENOTA ORA
             <ArrowRight className="w-4 h-4 ml-2" />

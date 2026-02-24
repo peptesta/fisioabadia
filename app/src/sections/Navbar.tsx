@@ -3,7 +3,6 @@ import { ChevronDown, Menu, X } from 'lucide-react';
 import { UserAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
-// Definisci il tipo per i link
 type NavLink = 
   | { name: string; href: string; hasDropdown?: boolean; isButton?: never; onClick?: never }
   | { name: string; href: string; isButton: true; onClick: () => void | Promise<void>; hasDropdown?: never };
@@ -28,7 +27,6 @@ const Navbar = () => {
     navigate('/');
   };
 
-  // Link base
   const baseNavLinks: NavLink[] = [
     { name: 'INIZIO', href: '#inicio' },
     { name: 'BUONO REGALO', href: '#bono' },
@@ -38,7 +36,6 @@ const Navbar = () => {
     { name: 'CONTATTO', href: '#contacto' },
   ];
 
-  // Link auth
   const authLink: NavLink = session
     ? { name: 'LOGOUT', href: '#', isButton: true, onClick: handleLogout }
     : { name: 'LOGIN/REGISTRATI', href: '/signup' };
@@ -49,31 +46,31 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-white/95 backdrop-blur-sm shadow-sm'
+          ? 'bg-[#cae9ff]/95 backdrop-blur-sm shadow-lg shadow-[#1b4965]/10'
           : 'bg-transparent'
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
-          <a href="#inicio" className="flex items-center">
+          <a href="#inicio" className="flex items-center group">
             <span
               className={`text-xl font-semibold tracking-wider transition-colors ${
-                isScrolled ? 'text-gray-800' : 'text-white'
+                isScrolled ? 'text-[#1b4965]' : 'text-white'
               }`}
             >
               FISIO
             </span>
             <span
               className={`text-xl font-light transition-colors ${
-                isScrolled ? 'text-gray-600' : 'text-white/80'
+                isScrolled ? 'text-[#5fa8d3]' : 'text-[#bee9e8]'
               }`}
             >
               ◊
             </span>
             <span
               className={`text-xl font-semibold tracking-wider transition-colors ${
-                isScrolled ? 'text-gray-800' : 'text-white'
+                isScrolled ? 'text-[#1b4965]' : 'text-white'
               }`}
             >
               ABADIA
@@ -87,8 +84,8 @@ const Navbar = () => {
                 <button
                   key={index}
                   onClick={link.onClick}
-                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#C9A962] ${
-                    isScrolled ? 'text-gray-700' : 'text-white'
+                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#5fa8d3] ${
+                    isScrolled ? 'text-[#1b4965]' : 'text-white'
                   }`}
                 >
                   {link.name}
@@ -97,9 +94,9 @@ const Navbar = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#C9A962] flex items-center gap-1 ${
-                    isScrolled ? 'text-gray-700' : 'text-white'
-                  } ${link.name === 'SERVIZI' ? 'text-[#C9A962]' : ''}`}
+                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#5fa8d3] flex items-center gap-1 ${
+                    isScrolled ? 'text-[#1b4965]' : 'text-white'
+                  } ${link.name === 'SERVIZI' ? 'text-[#62b6cb]' : ''}`}
                 >
                   {link.name}
                   {link.hasDropdown && <ChevronDown className="w-3 h-3" />}
@@ -116,13 +113,13 @@ const Navbar = () => {
             {isMobileMenuOpen ? (
               <X
                 className={`w-6 h-6 ${
-                  isScrolled ? 'text-gray-800' : 'text-white'
+                  isScrolled ? 'text-[#1b4965]' : 'text-white'
                 }`}
               />
             ) : (
               <Menu
                 className={`w-6 h-6 ${
-                  isScrolled ? 'text-gray-800' : 'text-white'
+                  isScrolled ? 'text-[#1b4965]' : 'text-white'
                 }`}
               />
             )}
@@ -131,7 +128,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-white shadow-lg rounded-lg mt-2 py-4">
+          <div className="lg:hidden bg-[#cae9ff] shadow-xl shadow-[#1b4965]/20 rounded-lg mt-2 py-4 border border-[#bee9e8]">
             {navLinks.map((link, index) => (
               'isButton' in link && link.isButton ? (
                 <button
@@ -140,7 +137,7 @@ const Navbar = () => {
                     link.onClick?.();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="block w-full text-left px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#C9A962] transition-colors"
+                  className="block w-full text-left px-4 py-3 text-sm font-medium text-[#1b4965] hover:bg-[#bee9e8] hover:text-[#5fa8d3] transition-colors"
                 >
                   {link.name}
                 </button>
@@ -148,7 +145,7 @@ const Navbar = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className="block px-4 py-3 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-[#C9A962] transition-colors"
+                  className="block px-4 py-3 text-sm font-medium text-[#1b4965] hover:bg-[#bee9e8] hover:text-[#5fa8d3] transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}

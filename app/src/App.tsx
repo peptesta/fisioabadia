@@ -21,8 +21,8 @@ function App() {
       <Fisioterapia />
       <Conditions />
       <Treatments />
-      <GoogleReviews />
-      <FullWidthImage />
+      {/*<GoogleReviews />
+      <FullWidthImage />*/}
       <SessionsInfo />
       <ParallaxBanner />
       <AboutPhysio />
