@@ -20,7 +20,6 @@ const Signup = () => {
   });
 
   const [isSubmitted, setIsSubmitted] = useState(false);
-
   const [error, setError] = useState<string | null>(null);
   const { session, signUpNewUser } = UserAuth() || {};
   const navigate = useNavigate();
@@ -69,21 +68,21 @@ const Signup = () => {
 
   if (isSubmitted) {
     return (
-      <section className="py-16 md:py-24 bg-[#F5F5F5]">
+      <section className="py-16 md:py-24 bg-[#E8F4F4]">
         <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-white rounded-sm shadow-lg p-8 md:p-12 text-center">
-            <div className="w-16 h-16 bg-[#C9A962]/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <CheckCircle className="w-8 h-8 text-[#C9A962]" />
+          <div className="bg-white rounded-lg shadow-lg shadow-[#006B6B]/10 p-8 md:p-12 text-center">
+            <div className="w-16 h-16 bg-[#7FCFCF]/20 rounded-full flex items-center justify-center mx-auto mb-6">
+              <CheckCircle className="w-8 h-8 text-[#006B6B]" />
             </div>
-            <h3 className="text-2xl font-semibold text-gray-800 mb-4">
+            <h3 className="text-2xl font-semibold text-[#006B6B] mb-4">
               REGISTRAZIONE COMPLETATA!
             </h3>
-            <p className="text-sm text-gray-600 mb-6">
+            <p className="text-sm text-[#006B6B]/70 mb-6">
               Grazie per esserti registrato. Ora puoi accedere al calendario delle prenotazioni e gestire le tue sessioni.
             </p>
             <Button
               onClick={() => setIsSubmitted(false)}
-              className="bg-[#C9A962] hover:bg-[#B8994F] text-white text-xs tracking-widest px-8 py-3 rounded-sm"
+              className="bg-[#006B6B] hover:bg-[#4A9B9B] text-white text-xs tracking-widest px-8 py-3 rounded-md"
             >
               Torna alla Home
             </Button>
@@ -94,14 +93,14 @@ const Signup = () => {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-[#F5F5F5]">
+    <section className="py-16 md:py-24 bg-[#E8F4F4]">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-800 mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold text-[#006B6B] mb-4">
             CREA IL TUO ACCOUNT
           </h2>
-          <p className="text-sm text-gray-600 max-w-lg mx-auto">
+          <p className="text-sm text-[#006B6B]/70 max-w-lg mx-auto">
             Registrati per accedere al calendario delle prenotazioni e gestire le tue sessioni.
           </p>
         </div>
@@ -111,19 +110,19 @@ const Signup = () => {
           <div className="lg:col-span-3">
             <form
               onSubmit={handleSignUp}
-              className="bg-white rounded-sm shadow-lg p-8 md:p-10"
+              className="bg-white rounded-lg shadow-lg shadow-[#006B6B]/10 p-8 md:p-10"
             >
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 {/* First Name */}
                 <div className="space-y-2">
                   <Label
                     htmlFor="firstName"
-                    className="text-xs font-medium text-gray-700 uppercase tracking-wider"
+                    className="text-xs font-medium text-[#006B6B] uppercase tracking-wider"
                   >
                     Nome *
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A9B9B]" />
                     <Input
                       id="firstName"
                       name="firstName"
@@ -132,7 +131,7 @@ const Signup = () => {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-gray-200 focus:border-[#C9A962] focus:ring-[#C9A962] rounded-sm text-sm"
+                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
                     />
                   </div>
                 </div>
@@ -141,12 +140,12 @@ const Signup = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="lastName"
-                    className="text-xs font-medium text-gray-700 uppercase tracking-wider"
+                    className="text-xs font-medium text-[#006B6B] uppercase tracking-wider"
                   >
                     Cognome *
                   </Label>
                   <div className="relative">
-                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A9B9B]" />
                     <Input
                       id="lastName"
                       name="lastName"
@@ -155,7 +154,7 @@ const Signup = () => {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-gray-200 focus:border-[#C9A962] focus:ring-[#C9A962] rounded-sm text-sm"
+                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
                     />
                   </div>
                 </div>
@@ -164,12 +163,12 @@ const Signup = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="email"
-                    className="text-xs font-medium text-gray-700 uppercase tracking-wider"
+                    className="text-xs font-medium text-[#006B6B] uppercase tracking-wider"
                   >
                     Email *
                   </Label>
                   <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A9B9B]" />
                     <Input
                       id="email"
                       name="email"
@@ -178,7 +177,7 @@ const Signup = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-gray-200 focus:border-[#C9A962] focus:ring-[#C9A962] rounded-sm text-sm"
+                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
                     />
                   </div>
                 </div>
@@ -187,12 +186,12 @@ const Signup = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="phone"
-                    className="text-xs font-medium text-gray-700 uppercase tracking-wider"
+                    className="text-xs font-medium text-[#006B6B] uppercase tracking-wider"
                   >
                     Cellulare *
                   </Label>
                   <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A9B9B]" />
                     <Input
                       id="phone"
                       name="phone"
@@ -201,7 +200,7 @@ const Signup = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-gray-200 focus:border-[#C9A962] focus:ring-[#C9A962] rounded-sm text-sm"
+                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
                     />
                   </div>
                 </div>
@@ -210,12 +209,12 @@ const Signup = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="password"
-                    className="text-xs font-medium text-gray-700 uppercase tracking-wider"
+                    className="text-xs font-medium text-[#006B6B] uppercase tracking-wider"
                   >
                     Password *
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A9B9B]" />
                     <Input
                       id="password"
                       name="password"
@@ -224,7 +223,7 @@ const Signup = () => {
                       value={formData.password}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-gray-200 focus:border-[#C9A962] focus:ring-[#C9A962] rounded-sm text-sm"
+                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
                     />
                   </div>
                 </div>
@@ -233,12 +232,12 @@ const Signup = () => {
                 <div className="space-y-2">
                   <Label
                     htmlFor="confirmPassword"
-                    className="text-xs font-medium text-gray-700 uppercase tracking-wider"
+                    className="text-xs font-medium text-[#006B6B] uppercase tracking-wider"
                   >
                     Confermare Password *
                   </Label>
                   <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#4A9B9B]" />
                     <Input
                       id="confirmPassword"
                       name="confirmPassword"
@@ -247,7 +246,7 @@ const Signup = () => {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-gray-200 focus:border-[#C9A962] focus:ring-[#C9A962] rounded-sm text-sm"
+                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
                     />
                   </div>
                 </div>
@@ -263,18 +262,18 @@ const Signup = () => {
                       handleCheckboxChange('acceptTerms', checked as boolean)
                     }
                     required
-                    className="mt-1 border-gray-300 data-[state=checked]:bg-[#C9A962] data-[state=checked]:border-[#C9A962]"
+                    className="mt-1 border-[#7FCFCF] data-[state=checked]:bg-[#006B6B] data-[state=checked]:border-[#006B6B]"
                   />
                   <Label
                     htmlFor="terms"
-                    className="text-xs text-gray-600 leading-relaxed cursor-pointer"
+                    className="text-xs text-[#006B6B]/70 leading-relaxed cursor-pointer"
                   >
                     Accetto i{' '}
-                    <a href="#" className="text-[#C9A962] hover:underline">
+                    <a href="#" className="text-[#4A9B9B] hover:underline">
                       termini e condizioni
                     </a>{' '}
                     e la{' '}
-                    <a href="#" className="text-[#C9A962] hover:underline">
+                    <a href="#" className="text-[#4A9B9B] hover:underline">
                       politica sulla privacy
                     </a>{' '}
                     *
@@ -285,7 +284,7 @@ const Signup = () => {
               {/* Submit Button */}
               <Button
                 type="submit"
-                className="w-full bg-[#C9A962] hover:bg-[#B8994F] text-white text-xs tracking-widest py-4 h-auto rounded-sm transition-colors"
+                className="w-full bg-[#006B6B] hover:bg-[#4A9B9B] text-white text-xs tracking-widest py-4 h-auto rounded-md transition-colors shadow-lg shadow-[#006B6B]/20"
               >
                 CREA ACCOUNT
                 <ArrowRight className="w-4 h-4 ml-2" />
@@ -295,7 +294,7 @@ const Signup = () => {
 
           {/* Benefits Section */}
           <div className="lg:col-span-2">
-            <div className="bg-[#4A4A4A] rounded-sm p-8 md:p-10 text-white">
+            <div className="bg-[#006B6B] rounded-lg p-8 md:p-10 text-white shadow-lg shadow-[#006B6B]/20">
               <h3 className="text-xl font-semibold mb-6 tracking-wide">
                 VANTAGGI DI REGISTRARTI
               </h3>
@@ -320,7 +319,7 @@ const Signup = () => {
                   },
                 ].map((benefit, index) => (
                   <li key={index} className="flex items-start">
-                    <span className="text-[#C9A962] mr-3 mt-1">•</span>
+                    <span className="text-[#7FCFCF] mr-3 mt-1">•</span>
                     <div>
                       <p className="font-medium text-sm">{benefit.title}</p>
                       <p className="text-xs text-white/70 mt-1">
@@ -335,10 +334,10 @@ const Signup = () => {
                 <p className="text-xs text-white/60 mb-4">
                   Già hai un account?
                 </p>
-                <a href="/signin" className="text-[#C9A962] hover:underline">
+                <a href="/signin" className="text-[#7FCFCF] hover:underline">
                     <Button
                     variant="outline"
-                    className="w-full border-white text-black hover:bg-[#C9A962] hover:text-[#4A4A4A] text-xs tracking-widest py-3 rounded-sm transition-colors"
+                    className="w-full border-white text-white hover:bg-[#4A9B9B] hover:text-white text-xs tracking-widest py-3 rounded-md transition-colors"
                     >
                     ACCEDI
                     </Button>
@@ -348,7 +347,7 @@ const Signup = () => {
           </div>
         </div>
         {error && (
-          <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-sm">
+          <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-md">
             {error}
           </div>
         )}

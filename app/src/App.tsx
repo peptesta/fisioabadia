@@ -1,4 +1,3 @@
-import Navbar from './sections/Navbar';
 import Hero from './sections/Hero';
 import Fisioterapia from './sections/Fisioterapia';
 import Conditions from './sections/Conditions';
@@ -11,12 +10,10 @@ import AboutPhysio from './sections/AboutPhysio';
 import PatientTestimonials from './sections/PatientTestimonials';
 import FAQ from './sections/FAQ';
 import Footer from './sections/Footer';
-import FloatingButtons from './sections/FloatingButtons';
 
 function App() {
   return (
     <div className="min-h-screen bg-white">
-      <Navbar />
       <Hero />
       <Fisioterapia />
       <Conditions />
@@ -29,7 +26,6 @@ function App() {
       <PatientTestimonials />
       <FAQ />
       <Footer />
-      <FloatingButtons />
     </div>
   );
 }
