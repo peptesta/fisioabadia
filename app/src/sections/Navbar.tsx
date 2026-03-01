@@ -46,7 +46,7 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
         isScrolled
-          ? 'bg-[#cae9ff]/95 backdrop-blur-sm shadow-lg shadow-[#1b4965]/10'
+          ? 'bg-[#006B6B]/95 backdrop-blur-sm shadow-lg shadow-[#006B6B]/20'
           : 'bg-transparent'
       }`}
     >
@@ -56,21 +56,21 @@ const Navbar = () => {
           <a href="#inicio" className="flex items-center group">
             <span
               className={`text-xl font-semibold tracking-wider transition-colors ${
-                isScrolled ? 'text-[#1b4965]' : 'text-white'
+                isScrolled ? 'text-white' : 'text-white'
               }`}
             >
               FISIO
             </span>
             <span
               className={`text-xl font-light transition-colors ${
-                isScrolled ? 'text-[#5fa8d3]' : 'text-[#bee9e8]'
+                isScrolled ? 'text-[#7FCFCF]' : 'text-[#7FCFCF]'
               }`}
             >
               ◊
             </span>
             <span
               className={`text-xl font-semibold tracking-wider transition-colors ${
-                isScrolled ? 'text-[#1b4965]' : 'text-white'
+                isScrolled ? 'text-white' : 'text-white'
               }`}
             >
               ABADIA
@@ -84,8 +84,8 @@ const Navbar = () => {
                 <button
                   key={index}
                   onClick={link.onClick}
-                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#5fa8d3] ${
-                    isScrolled ? 'text-[#1b4965]' : 'text-white'
+                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#7FCFCF] ${
+                    isScrolled ? 'text-white' : 'text-white'
                   }`}
                 >
                   {link.name}
@@ -94,8 +94,8 @@ const Navbar = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#5fa8d3] flex items-center gap-1 ${
-                    isScrolled ? 'text-[#1b4965]' : 'text-white'
+                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#7FCFCF] flex items-center gap-1 ${
+                    isScrolled ? 'text-white' : 'text-white'
                   }`}
                 >
                   {link.name}
@@ -113,13 +113,13 @@ const Navbar = () => {
             {isMobileMenuOpen ? (
               <X
                 className={`w-6 h-6 ${
-                  isScrolled ? 'text-[#1b4965]' : 'text-white'
+                  isScrolled ? 'text-white' : 'text-white'
                 }`}
               />
             ) : (
               <Menu
                 className={`w-6 h-6 ${
-                  isScrolled ? 'text-[#1b4965]' : 'text-white'
+                  isScrolled ? 'text-white' : 'text-white'
                 }`}
               />
             )}
@@ -128,7 +128,7 @@ const Navbar = () => {
 
         {/* Mobile Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden bg-[#cae9ff] shadow-xl shadow-[#1b4965]/20 rounded-lg mt-2 py-4 border border-[#bee9e8]">
+          <div className="lg:hidden bg-[#006B6B] shadow-xl shadow-[#006B6B]/30 rounded-lg mt-2 py-4 border border-[#4A9B9B]">
             {navLinks.map((link, index) => (
               'isButton' in link && link.isButton ? (
                 <button
@@ -137,7 +137,7 @@ const Navbar = () => {
                     link.onClick?.();
                     setIsMobileMenuOpen(false);
                   }}
-                  className="block w-full text-left px-4 py-3 text-sm font-medium text-[#1b4965] hover:bg-[#bee9e8] hover:text-[#5fa8d3] transition-colors"
+                  className="block w-full text-left px-4 py-3 text-sm font-medium text-white hover:bg-[#4A9B9B] hover:text-[#7FCFCF] transition-colors"
                 >
                   {link.name}
                 </button>
@@ -145,7 +145,7 @@ const Navbar = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className="block px-4 py-3 text-sm font-medium text-[#1b4965] hover:bg-[#bee9e8] hover:text-[#5fa8d3] transition-colors"
+                  className="block px-4 py-3 text-sm font-medium text-white hover:bg-[#4A9B9B] hover:text-[#7FCFCF] transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}

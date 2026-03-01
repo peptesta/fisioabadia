@@ -8,7 +8,7 @@ const FloatingButtons = () => {
         href="https://wa.me/34626934089"
         target="_blank"
         rel="noopener noreferrer"
-        className="bg-[#5fa8d3] hover:bg-[#62b6cb] text-white p-3 rounded-l-lg transition-all duration-300 shadow-lg shadow-[#5fa8d3]/30 hover:shadow-xl hover:shadow-[#62b6cb]/40 hover:pr-5"
+        className="bg-[#4A9B9B] hover:bg-[#5AAAAA] text-white p-3 rounded-l-lg transition-all duration-300 shadow-lg shadow-[#4A9B9B]/30 hover:shadow-xl hover:shadow-[#4A9B9B]/40 hover:pr-5"
         title="WhatsApp"
       >
         <MessageCircle className="w-5 h-5" />
@@ -17,7 +17,7 @@ const FloatingButtons = () => {
       {/* Phone Button */}
       <a
         href="tel:+34626934089"
-        className="bg-[#1b4965] hover:bg-[#2a5a7a] text-white p-3 rounded-l-lg transition-all duration-300 shadow-lg shadow-[#1b4965]/30 hover:shadow-xl hover:shadow-[#1b4965]/40 hover:pr-5"
+        className="bg-[#006B6B] hover:bg-[#007B7B] text-white p-3 rounded-l-lg transition-all duration-300 shadow-lg shadow-[#006B6B]/30 hover:shadow-xl hover:shadow-[#006B6B]/40 hover:pr-5"
         title="Llamar"
       >
         <Phone className="w-5 h-5" />
@@ -26,7 +26,7 @@ const FloatingButtons = () => {
       {/* Calendar Button */}
       <a
         href="#contacto"
-        className="bg-[#62b6cb] hover:bg-[#7bc4d6] text-white p-3 rounded-l-lg transition-all duration-300 shadow-lg shadow-[#62b6cb]/30 hover:shadow-xl hover:shadow-[#62b6cb]/40 hover:pr-5"
+        className="bg-[#7FCFCF] hover:bg-[#8FDFDF] text-[#006B6B] p-3 rounded-l-lg transition-all duration-300 shadow-lg shadow-[#7FCFCF]/30 hover:shadow-xl hover:shadow-[#7FCFCF]/40 hover:pr-5"
         title="Cita"
       >
         <Calendar className="w-5 h-5" />

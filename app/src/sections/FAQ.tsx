@@ -42,10 +42,10 @@ const FAQ = () => {
   return (
     <section className="py-16 md:py-24 bg-white">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-[#1b4965] text-center mb-12">
+        <h2 className="text-3xl md:text-4xl font-bold text-[#006B6B] text-center mb-12">
           DOMANDE
           <br />
-          <span className="text-[#5fa8d3]">FREQUENTI</span>
+          <span className="text-[#4A9B9B]">FREQUENTI</span>
         </h2>
 
         <div className="grid md:grid-cols-2 gap-4">
@@ -54,13 +54,13 @@ const FAQ = () => {
               key={index}
               type="single"
               collapsible
-              className="bg-[#cae9ff]/30 rounded-lg border border-[#bee9e8] overflow-hidden"
+              className="bg-[#E8F4F4] rounded-lg border border-[#7FCFCF]/50 overflow-hidden"
             >
               <AccordionItem value={`item-${index}`} className="border-none">
-                <AccordionTrigger className="px-4 py-4 text-left text-sm font-semibold text-[#1b4965] hover:no-underline hover:bg-[#cae9ff]/50 transition-colors">
+                <AccordionTrigger className="px-4 py-4 text-left text-sm font-semibold text-[#006B6B] hover:no-underline hover:bg-[#7FCFCF]/20 transition-colors">
                   {faq.question}
                 </AccordionTrigger>
-                <AccordionContent className="px-4 pb-4 text-sm text-[#1b4965]/80 leading-relaxed bg-white/50">
+                <AccordionContent className="px-4 pb-4 text-sm text-[#006B6B]/80 leading-relaxed bg-white/50">
                   {faq.answer}
                 </AccordionContent>
               </AccordionItem>

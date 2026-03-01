@@ -8,8 +8,8 @@ const Hero = () => {
           backgroundImage: 'url(/hero-physio.jpg)',
         }}
       >
-        {/* Overlay - Blue tinted for palette cohesion */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1b4965]/60 via-[#1b4965]/40 to-[#62b6cb]/30" />
+        {/* Overlay - Teal tinted for medical professionalism */}
+        <div className="absolute inset-0 bg-gradient-to-br from-[#006B6B]/70 via-[#006B6B]/50 to-[#4A9B9B]/40" />
       </div>
 
       {/* Content */}
@@ -19,10 +19,10 @@ const Hero = () => {
             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight mb-4 drop-shadow-lg">
               FISIOTERAPIA E RIABILITAZIONE NEUROLOGICA
               <br />
-              <span className="text-[#bee9e8]">NAPOLI</span>
+              <span className="text-[#7FCFCF]">NAPOLI</span>
             </h1>
-            {/* Optional accent line */}
-            <div className="w-24 h-1 bg-[#62b6cb] mt-6 rounded-full" />
+            {/* Decorative line */}
+            <div className="w-24 h-1 bg-[#7FCFCF] mt-6 rounded-full" />
           </div>
         </div>
       </div>

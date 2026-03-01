@@ -4,45 +4,40 @@ import { ArrowRight } from 'lucide-react';
 const SessionsInfo = () => {
   const features = [
     {
-      title: 'MULTIDISCIPLINARE',
-      subtitle: 'SPECIALISTI IN',
+      title: 'SPECIALIZZAZIONE NEUROLOGICA',
+      subtitle: 'SISTEMA NERVOSO',
       description:
-        'Apparato locomotore, neurologico, sportivo, ginecologico, pediatrico e geriatrico.',
-      bgColor: 'bg-[#1b4965]', // Yale Blue - deep and sophisticated
+        'Trattamento mirato per esiti di Ictus, Parkinson, Sclerosi Multipla e patologie del sistema nervoso centrale e periferico.',
+      bgColor: 'bg-[#006B6B]', // Dark Teal
       textColor: 'text-white',
-      buttonVariant: 'outline' as const,
       buttonClass: 'border-white text-white hover:bg-white/20',
     },
     {
-      title: 'DOLORE ALLA SCHIENA E INFORTUNI',
-      subtitle: 'Trattamento completo del dolore e prevenzione.',
+      title: 'COMODITÀ A DOMICILIO',
+      subtitle: 'RIABILITAZIONE DOVE SEI TU',
       description:
-        'Cerchiamo la soluzione alle patologie e alla causa che provoca il dolore.',
-      bgColor: 'bg-[#5fa8d3]', // Fresh Sky - vivid and optimistic
+        'Porto la terapia direttamente a casa tua a Napoli, eliminando lo stress del trasporto e lavorando nel tuo ambiente quotidiano.',
+      bgColor: 'bg-[#4A9B9B]', // Medium Teal
       textColor: 'text-white',
-      buttonVariant: 'outline' as const,
       buttonClass: 'border-white text-white hover:bg-white/20',
     },
     {
-      title: 'RIABILITAZIONE E PREVENZIONE',
-      subtitle:
-        'Dopo aver trattato il dolore, la prevenzione è altrettanto importante.',
+      title: 'VALUTAZIONE FUNZIONALE',
+      subtitle: 'PIANO PERSONALIZZATO',
       description:
-        'Ti insegneremo esercizi specifici per evitare che il dolore ritorni.',
-      bgColor: 'bg-[#cae9ff]', // Pale Sky - soft and airy
-      textColor: 'text-[#1b4965]',
-      buttonVariant: 'default' as const,
-      buttonClass: 'bg-[#1b4965] hover:bg-[#2a5a7a] text-white shadow-md',
+        'Eseguo un\'accurata valutazione neurologica e motoria per definire obiettivi concreti di autonomia e recupero.',
+      bgColor: 'bg-[#E8F4F4]', // Very Light Teal
+      textColor: 'text-[#006B6B]',
+      buttonClass: 'bg-[#006B6B] hover:bg-[#4A9B9B] text-white shadow-md',
     },
     {
-      title: 'ALLENATI BENE',
+      title: 'AUTONOMIA E CAMMINO',
       subtitle: 'TORNA A MUOVERTI',
       description:
-        'Stai uscendo da un infortunio e vuoi tornare a muoverti, non solo recuperare la mobilità. Il Pilates con macchinari è una tecnica sicura ed efficace.',
-      bgColor: 'bg-[#62b6cb]', // Pacific Blue - bright and invigorating
-      textColor: 'text-white',
-      buttonVariant: 'outline' as const,
-      buttonClass: 'border-white text-white hover:bg-white/20',
+        'Lavoro sul ripristino del cammino, dell\'equilibrio e della coordinazione per migliorare la qualità della tua vita ogni giorno.',
+      bgColor: 'bg-[#7FCFCF]', // Light Teal/Cyan
+      textColor: 'text-[#006B6B]',
+      buttonClass: 'bg-[#006B6B] hover:bg-[#4A9B9B] text-white shadow-md',
     },
   ];
 
@@ -50,23 +45,23 @@ const SessionsInfo = () => {
     <section className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header Text */}
-        <div className="max-w-4xl mx-auto text-center mb-12 border-2 border-[#bee9e8] p-8 rounded-lg bg-[#cae9ff]/10">
-          <h2 className="text-xl md:text-2xl font-semibold text-[#1b4965] mb-4">
-            COME SONO LE MIE SEDUTE DI FISIOTERAPIA A NAPOLI?
+        <div className="max-w-4xl mx-auto text-center mb-12 border-2 border-[#7FCFCF] p-8 rounded-lg bg-[#E8F4F4]/50">
+          <h2 className="text-xl md:text-2xl font-semibold text-[#006B6B] mb-4 uppercase">
+            Fisioterapia e Riabilitazione Neurologica a Domicilio a Napoli
           </h2>
-          <p className="text-sm text-[#1b4965]/70 leading-relaxed mb-6">
-            Offro un servizio di fisioterapia a Napoli altamente specializzato, mettendo al centro la tua salute e il tuo benessere. 
-            Il mio obiettivo è aiutarti a ridurre il dolore e risolvere la problematica alla sua origine, non solo i sintomi.
-            Durante il primo incontro ascolto la tua storia clinica e valuto con attenzione la tua situazione attraverso un'accurata 
-            valutazione ed esplorazione fisica. In questo modo posso individuare le cause del problema e costruire un piano di trattamento personalizzato.
-            Nel percorso terapeutico utilizzo diverse tecniche, scelte in base alle tue esigenze e alla patologia, dagli approcci manuali 
-            e articolari fino a tecniche più delicate come quelle craniali.
+          <p className="text-sm text-[#006B6B]/70 leading-relaxed mb-6">
+            Offro un servizio di <strong>fisioterapia neurologica direttamente presso il tuo domicilio</strong> a Napoli. 
+            Il mio approccio è dedicato a chi necessita di un percorso riabilitativo specialistico per patologie del sistema nervoso, 
+            svolto nel comfort e nella sicurezza della propria casa. 
+            Durante il primo incontro domiciliare, effettuo una <strong>valutazione neurologica completa</strong> per analizzare 
+            le capacità motorie e sensitive. Lavoriamo insieme non solo sui sintomi, ma sul recupero funzionale e sull'autonomia 
+            nello spazio domestico, utilizzando tecniche manuali e protocolli di esercizio terapeutico personalizzati.
           </p>
           <Button
             variant="default"
-            className="bg-[#5fa8d3] hover:bg-[#62b6cb] text-white text-xs tracking-widest px-6 py-2 rounded-md shadow-lg shadow-[#5fa8d3]/30 transition-all hover:shadow-xl hover:shadow-[#5fa8d3]/40"
+            className="bg-[#006B6B] hover:bg-[#4A9B9B] text-white text-xs tracking-widest px-6 py-2 rounded-md shadow-lg shadow-[#006B6B]/30 transition-all hover:shadow-xl hover:shadow-[#006B6B]/40"
           >
-            MI INTERESSA!
+            PRENOTA UNA VISITA A DOMICILIO
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>
@@ -88,7 +83,7 @@ const SessionsInfo = () => {
                 {feature.description}
               </p>
               <Button
-                variant={feature.buttonVariant}
+                variant="outline"
                 className={`mt-4 text-xs tracking-widest rounded-md ${feature.buttonClass}`}
               >
                 MAGGIORI INFO
