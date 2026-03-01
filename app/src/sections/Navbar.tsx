@@ -41,8 +41,8 @@ const Navbar = () => {
 
   const authLink: NavLink[] = session
     ? [
-        { name: 'DASHBOARD', href: session.user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard' },
-        { name: session.user.role === 'admin' ? 'GESTISCI DISPONIBILITÀ' : '', href: session.user.role === 'admin' ? '/admin/availability' : ''},
+        { name: 'DASHBOARD', href: ['sonsycomb@gmail.com', 'abadia@gmail.com'].includes(session.user.email || '') ? '/admin/dashboard' : '/user/dashboard' },
+        { name: ['sonsycomb@gmail.com', 'abadia@gmail.com'].includes(session.user.email || '') ? 'GESTISCI DISPONIBILITÀ' : '', href: ['sonsycomb@gmail.com', 'abadia@gmail.com'].includes(session.user.email || '') ? '/admin/availability' : ''},
         { name: 'PRENOTAZIONI', href: '/user/booking' },
         { name: 'LOGOUT', href: '#', isButton: true, onClick: handleLogout },
       ]
