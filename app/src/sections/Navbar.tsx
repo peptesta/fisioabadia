@@ -42,6 +42,7 @@ const Navbar = () => {
   const authLink: NavLink[] = session
     ? [
         { name: 'DASHBOARD', href: session.user.role === 'admin' ? '/admin/dashboard' : '/user/dashboard' },
+        { name: session.user.role === 'admin' ? 'GESTISCI DISPONIBILITÀ' : '', href: session.user.role === 'admin' ? '/admin/availability' : ''},
         { name: 'PRENOTAZIONI', href: '/user/booking' },
         { name: 'LOGOUT', href: '#', isButton: true, onClick: handleLogout },
       ]
