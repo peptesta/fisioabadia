@@ -7,7 +7,7 @@ export default function ProtectedAdminRoute() {
 
   // Recupero la lista delle email autorizzate dal file .env
   // .split(",") trasforma la stringa "mail1@test.it,mail2@test.it" in un array
-  const adminEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(",") || [];
+  //const adminEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(",") || [];
 
   if (!authContext) return null;
 
@@ -29,7 +29,8 @@ export default function ProtectedAdminRoute() {
 
   // 3. Controllo Autorizzazione: La mail dell'utente è nella lista admin?
   const userEmail = session.user?.email;
-  const isAdmin = userEmail && adminEmails.includes(userEmail);
+  //const isAdmin = userEmail && adminEmails.includes(userEmail);
+  const isAdmin = authContext.isAdmin;
 
   if (!isAdmin) {
     console.warn(`Accesso Admin negato per: ${userEmail}`);
