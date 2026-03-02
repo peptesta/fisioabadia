@@ -18,8 +18,8 @@ const Navbar = () => {
   const isHomePage = location.pathname === "/";
 
   // Controllo admin da .env
-  const adminEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
-  const isAdmin = session?.user?.email && adminEmails.includes(session.user.email);
+  //const adminEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
+  const { isAdmin } = UserAuth() || {};
 
   useEffect(() => {
     const handleScroll = () => {
