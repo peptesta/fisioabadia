@@ -90,10 +90,10 @@ const Signin = () => {
               Sei già autenticato!
             </h3>
             <Button
-              onClick={() => navigate('/calendar')}
+              onClick={() => navigate('/')}
               className="bg-[#006B6B] hover:bg-[#4A9B9B] text-white text-xs tracking-widest px-8 py-3 rounded-md"
             >
-              Vai al Calendario
+              Vai alla home
             </Button>
           </div>
         </div>

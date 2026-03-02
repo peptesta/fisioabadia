@@ -20,6 +20,7 @@ const Navbar = () => {
   // Controllo admin da .env
   //const adminEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
   const { isAdmin } = UserAuth() || {};
+  console.log(`Navbar - Session: ${session ? session.user?.email : 'No session'} - IsAdmin: ${isAdmin}`);
 
   useEffect(() => {
     const handleScroll = () => {
