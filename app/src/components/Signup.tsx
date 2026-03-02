@@ -19,47 +19,96 @@ const Signup = () => {
     acceptTerms: false,
   });
 
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { session, signUpNewUser } = UserAuth() || {};
   const navigate = useNavigate();
   console.log('Sessione utente:', session);
 
+  const sanitizeInput = (value: string) => {
+    return value.replace(/['";\\]/g, '').trim();
+  };
+
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+
+    // Email regex semplice e sicura
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    // Telefono solo numeri (min 6 cifre)
+    const phoneRegex = /^[0-9]{6,15}$/;
+
+    if (!emailRegex.test(formData.email)) {
+      errors.email = 'Formato email non valido (esempio: nome@email.com)';
+    }
+
+    if (!phoneRegex.test(formData.phone)) {
+      errors.phone = 'Il numero deve contenere solo cifre';
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      errors.confirmPassword = 'Le password non coincidono';
+    }
+
+    if (formData.password.length < 6) {
+      errors.password = 'La password deve avere almeno 6 caratteri';
+    }
+
+    return errors;
+  };
+
   const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+
+    const validationErrors = validateForm();
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      return;
+    }
+
+    setFieldErrors({});
     setIsSubmitted(true);
-    try{
-        if (!signUpNewUser) {
-            console.error('Errore: signUpNewUser non disponibile');
-            return;
+
+    try {
+      if (!signUpNewUser) return;
+
+      const result = await signUpNewUser(
+        sanitizeInput(formData.email),
+        sanitizeInput(formData.password),
+        {
+          data: {
+            firstName: sanitizeInput(formData.firstName),
+            lastName: sanitizeInput(formData.lastName),
+            phone: sanitizeInput(formData.phone),
+          }
         }
-        const result = await signUpNewUser(
-            formData.email, 
-            formData.password,
-            {
-                data: {
-                    firstName: formData.firstName,
-                    lastName: formData.lastName,
-                    phone: formData.phone,
-                }
-            }
-        );
-        if (result.success) {
-            navigate('/');
-        } else {
-            console.error('Errore durante la registrazione:', result.error);
-            setError(result.error.message);
-        }
-    }catch(error){
-        console.error('Errore durante la registrazione:', error);
+      );
+
+      if (result.success) {
+        navigate('/');
+      } else {
+        setError(result.error.message);
+      }
+
+    } catch (error) {
+      console.error(error);
     } finally {
-        setIsSubmitted(false);
+      setIsSubmitted(false);
     }
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    let newValue = value;
+
+    if (name === 'phone') {
+      newValue = value.replace(/\D/g, '');
+    }
+
+    setFormData((prev) => ({ ...prev, [name]: newValue }));
   };
 
   const handleCheckboxChange = (name: string, checked: boolean) => {
@@ -177,8 +226,14 @@ const Signup = () => {
                       value={formData.email}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
-                    />
+                      className={`pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm ${
+                        fieldErrors.email ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+                      }`}                    />
+                    {fieldErrors.email && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.email}
+                    </p>
+                  )}
                   </div>
                 </div>
 
@@ -200,8 +255,14 @@ const Signup = () => {
                       value={formData.phone}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
-                    />
+                      className={`pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm ${
+                        fieldErrors.phone ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
+                      }`}                    />
+                    {fieldErrors.phone && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {fieldErrors.phone}
+                    </p>
+                  )}
                   </div>
                 </div>
 
@@ -223,8 +284,16 @@ const Signup = () => {
                       value={formData.password}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
-                    />
+                      className={`pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm ${
+                        fieldErrors.password
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                          : ''
+                      }`}                    />
+                      {fieldErrors.password && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {fieldErrors.password}
+                      </p>
+                    )}
                   </div>
                 </div>
 
@@ -246,8 +315,15 @@ const Signup = () => {
                       value={formData.confirmPassword}
                       onChange={handleInputChange}
                       required
-                      className="pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm"
-                    />
+                      className={`pl-10 h-12 border-[#7FCFCF]/50 focus:border-[#006B6B] focus:ring-[#006B6B] rounded-md text-sm ${                        fieldErrors.confirmPassword
+                          ? 'border-red-500 focus:border-red-500 focus:ring-red-500'
+                          : ''
+                      }`} />
+                      {fieldErrors.confirmPassword && (
+                      <p className="text-red-500 text-xs mt-1">
+                        {fieldErrors.confirmPassword}
+                      </p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -337,7 +413,7 @@ const Signup = () => {
                 <a href="/signin" className="text-[#7FCFCF] hover:underline">
                     <Button
                     variant="outline"
-                    className="w-full border-white text-white hover:bg-[#4A9B9B] hover:text-white text-xs tracking-widest py-3 rounded-md transition-colors"
+                    className="w-full border-white text-[#006B6B] hover:bg-[#4A9B9B] hover:text-white text-xs tracking-widest py-3 rounded-md transition-colors"
                     >
                     ACCEDI
                     </Button>

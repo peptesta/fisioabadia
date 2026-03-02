@@ -5,9 +5,17 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, isToday, addMonths, subMonths } from "date-fns";
+import { format, parseISO, startOfMonth, endOfMonth, eachDayOfInterval, addMonths, subMonths } from "date-fns";
 import { it } from "date-fns/locale";
 import { Plus, Trash2, Calendar as CalendarIcon, Clock, Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 interface Availability {
   id: number;
@@ -17,12 +25,16 @@ interface Availability {
 }
 
 export default function AdminAvailability() {
+  const navigate = useNavigate();
   const [selectedDays, setSelectedDays] = useState<Date[]>([]);
   const [timeSlots, setTimeSlots] = useState([{ start: "09:00", end: "10:00" }]);
   const [existingAvailability, setExistingAvailability] = useState<Availability[]>([]);
   const [loading, setLoading] = useState(false);
   const [currentMonth, setCurrentMonth] = useState(new Date());
   const [duplicateError, setDuplicateError] = useState<string | null>(null);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
+  const [viewDaySlots, setViewDaySlots] = useState<Availability[]>([]);
+  const [selectedDayLabel, setSelectedDayLabel] = useState("");
 
   const fetchAvailability = async () => {
     console.log("DEBUG: Inizio fetch disponibilità...");
@@ -45,16 +57,15 @@ export default function AdminAvailability() {
   }, []);
 
   const handleSave = async () => {
-    console.log("DEBUG: Bottone SALVA cliccato");
-
     if (selectedDays.length === 0) {
       toast.error("Seleziona almeno un giorno!");
       return;
     }
 
     setLoading(true);
+    setDuplicateError(null);
 
-    // 1. Generazione del payload
+    // 1. Generazione del payload (senza controlli preventivi di sovrapposizione)
     const payload = selectedDays.flatMap((day) =>
       timeSlots.map((slot) => {
         const [sh, sm] = slot.start.split(":").map(Number);
@@ -71,50 +82,62 @@ export default function AdminAvailability() {
       })
     );
 
-    // 2. CONTROLLO DUPLICATI
-    // Verifichiamo se qualcuno dei nuovi slot esiste già nel database (existingAvailability)
-    const duplicates = payload.filter(newSlot => 
-      existingAvailability.some(existing => 
-        existing.start_time === newSlot.start_time && 
-        existing.end_time === newSlot.end_time
-      )
-    );
-
-    if (duplicates.length > 0) {
-      const firstDup = duplicates[0];
-      const dupDate = format(parseISO(firstDup.start_time), "dd/MM 'alle' HH:mm", { locale: it });
-      toast.error(`Errore: Lo slot del ${dupDate} esiste già nel database!`);
-      setLoading(false);
-      return; // Blocca l'invio
-    }
-
-    // 3. INVIO AL DB (Se non ci sono duplicati)
-    console.log("DEBUG: Nessun duplicato trovato. Invio payload:", payload);
-
-    const { error } = await supabase.from("availability").insert(payload).select();
+    // 2. Invio diretto al Database
+    const { error } = await supabase.from("availability").insert(payload);
 
     if (error) {
-      console.error("DEBUG: Errore durante l'INSERT:", error);
-      toast.error(`Errore DB: ${error.message}`);
-      if (error.code === "23505") { // Codice errore per violazione di unicità in PostgreSQL
-        setDuplicateError("Slot già esistente");
-        }
+      console.error("DEBUG: Errore Supabase:", error);
+
+      // GESTIONE ERRORI SPECIFICI
+      if (error.code === "23P01") {
+        // Errore 23P01: Exclusion Violation (Sovrapposizione oraria)
+        const msg = "Errore: Uno o più slot si sovrappongono a disponibilità già esistenti.";
+        toast.error(msg);
+        setDuplicateError(msg);
+      } 
+      else if (error.code === "23505") {
+        // Errore 23505: Unique Violation (Slot identico)
+        const msg = "Errore: Questo orario è già presente nel database.";
+        toast.error(msg);
+        setDuplicateError(msg);
+      } 
+      else {
+        // Altri errori generici
+        toast.error(`Si è verificato un errore: ${error.message}`);
+      }
     } else {
-      console.log("DEBUG: Inserimento riuscito!");
-      toast.success(`${payload.length} nuovi slot inseriti correttamente`);
-      setSelectedDays([]); 
-      await fetchAvailability();
+      // SUCCESSO
+      toast.success(`${payload.length} slot salvati correttamente!`);
+      setSelectedDays([]);
+      fetchAvailability(); // Ricarica la lista aggiornata
     }
+
     setLoading(false);
   };
 
   const deleteSlot = async (id: number) => {
-    console.log("DEBUG: Tentativo eliminazione slot ID:", id);
+    const slotToDelete = existingAvailability.find(s => s.id === id);
+    
+    if (slotToDelete?.is_booked) {
+      const confirmDelete = window.confirm(
+        "ATTENZIONE: Questo slot è PRENOTATO. Cancellandolo eliminerai la prenotazione dal database. Confermi?"
+      );
+      if (!confirmDelete) return;
+    }
+
     const { error } = await supabase.from("availability").delete().eq("id", id);
-    if (error) {
-      console.error("DEBUG: Errore cancellazione:", error);
-    } else {
+    if (!error) {
       toast.success("Slot rimosso");
+      
+      // 1. Aggiorna la lista locale del popup
+      const newViewSlots = viewDaySlots.filter(s => s.id !== id);
+      setViewDaySlots(newViewSlots);
+      
+      // 2. Se era l'ultimo slot del giorno, chiudi il modal automaticamente
+      if (newViewSlots.length === 0) {
+        setIsViewModalOpen(false);
+      }
+      
       fetchAvailability();
     }
   };
@@ -123,6 +146,17 @@ export default function AdminAvailability() {
     return selectedDays.some(selectedDay => 
       format(selectedDay, 'yyyy-MM-dd') === format(day, 'yyyy-MM-dd')
     );
+  };
+
+  const openDayDetail = (slot: Availability) => {
+    const dayStart = format(parseISO(slot.start_time), 'yyyy-MM-dd');
+    const daySlots = existingAvailability.filter(s => 
+      format(parseISO(s.start_time), 'yyyy-MM-dd') === dayStart
+    );
+    
+    setViewDaySlots(daySlots);
+    setSelectedDayLabel(format(parseISO(slot.start_time), "EEEE dd MMMM", { locale: it }));
+    setIsViewModalOpen(true);
   };
 
   const toggleDay = (day: Date) => {
@@ -209,29 +243,31 @@ export default function AdminAvailability() {
                 <div className="grid grid-cols-7 gap-3">
                   {days.map((day, idx) => {
                     const selected = isSelected(day);
-                    const today = isToday(day);
+                    const dayStr = format(day, 'yyyy-MM-dd');
                     
+                    // Trova tutti gli slot di questo giorno
+                    const slotsForDay = existingAvailability.filter(slot => 
+                      format(parseISO(slot.start_time), 'yyyy-MM-dd') === dayStr
+                    );
+                    
+                    const hasSlots = slotsForDay.length > 0;
+                    // Se tutti gli slot del giorno sono prenotati, il pallino diventa rosso
+                    const allBooked = hasSlots && slotsForDay.every(slot => slot.is_booked);
+
                     return (
                       <button
                         key={idx}
                         onClick={() => toggleDay(day)}
-                        className={`
-                          relative h-24 lg:h-28 rounded-2xl font-bold text-xl transition-all duration-300 ease-out
-                          flex flex-col items-center justify-center gap-1
-                          ${selected 
-                            ? 'bg-[#006B6B] text-white shadow-lg shadow-[#006B6B]/30 scale-105' 
-                            : today
-                              ? 'bg-[#7FCFCF]/30 text-[#006B6B] border-2 border-[#006B6B] hover:bg-[#006B6B] hover:text-white'
-                              : 'bg-[#E8F4F4] text-[#4A9B9B] hover:bg-[#4A9B9B] hover:text-white hover:shadow-lg hover:shadow-[#4A9B9B]/20 hover:-translate-y-1'
-                          }
-                        `}
+                        className={`relative h-24 lg:h-28 rounded-2xl font-bold text-xl transition-all duration-300 flex flex-col items-center justify-center gap-1 ${
+                          selected ? 'bg-[#006B6B] text-white shadow-lg' : 'bg-[#E8F4F4] text-[#4A9B9B]'
+                        }`}
                       >
                         <span className="text-2xl">{format(day, "d")}</span>
-                        {selected && (
-                          <span className="text-xs font-medium opacity-80">Selezionato</span>
-                        )}
-                        {today && !selected && (
-                          <span className="text-xs font-bold">Oggi</span>
+                        
+                        {hasSlots && !selected && (
+                          <div className={`absolute bottom-3 w-2.5 h-2.5 rounded-full shadow-sm ${
+                            allBooked ? 'bg-red-500 animate-pulse' : 'bg-[#006B6B]'
+                          }`} />
                         )}
                       </button>
                     );
@@ -251,6 +287,10 @@ export default function AdminAvailability() {
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 rounded-lg bg-[#7FCFCF]/30 border-2 border-[#006B6B]" />
                     <span className="text-sm font-bold text-[#006B6B]">Oggi</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-[#006B6B]" />
+                    <span className="text-sm font-bold text-[#006B6B]">Slot Esistenti</span>
                   </div>
                 </div>
               </CardContent>
@@ -371,7 +411,8 @@ export default function AdminAvailability() {
                   {loading ? "Caricamento..." : `Salva ${selectedDays.length > 0 ? selectedDays.length * timeSlots.length : ''} Slot`}
                 </Button>
                 {duplicateError && (
-                  <div className="mt-4 p-4 rounded-xl bg-red-100 text-red-700 text-sm">
+                  <div className="mt-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm font-bold flex items-center gap-2 animate-in fade-in slide-in-from-top-2">
+                    <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
                     {duplicateError}
                   </div>
                 )}
@@ -409,24 +450,30 @@ export default function AdminAvailability() {
                     {existingAvailability.map((slot) => (
                       <div 
                         key={slot.id} 
-                        className="group flex items-center justify-between p-5 hover:bg-[#F0FAFA] transition-colors duration-200"
+                        onClick={() => openDayDetail(slot)}
+                        className="group flex items-center justify-between p-5 hover:bg-[#F0FAFA] transition-colors duration-200 cursor-pointer"
                       >
                         <div className="flex items-center gap-4">
-                          <div className={`w-3 h-12 rounded-full ${slot.is_booked ? 'bg-red-400' : 'bg-[#7FCFCF]'} shadow-inner`} />
+                          {/* Colore rosso se prenotato */}
+                          <div className={`w-3 h-12 rounded-full ${slot.is_booked ? 'bg-red-500 shadow-[0_0_10px_rgba(239,68,68,0.5)]' : 'bg-[#7FCFCF]'} shadow-inner`} />
                           <div>
-                            <span className="font-black text-[#006B6B] text-lg block">
+                            <span className="font-black text-[#006B6B] text-lg block italic">
                               {format(parseISO(slot.start_time), "EEEE dd MMMM", { locale: it })}
                             </span>
-                            <span className="font-bold text-[#4A9B9B] text-sm flex items-center gap-2">
+                            <span className={`font-bold text-sm flex items-center gap-2 ${slot.is_booked ? 'text-red-500' : 'text-[#4A9B9B]'}`}>
                               <Clock size={14} />
                               {format(parseISO(slot.start_time), "HH:mm")} - {format(parseISO(slot.end_time), "HH:mm")}
+                              {slot.is_booked && <span className="ml-2 uppercase text-[10px] tracking-tighter bg-red-100 px-2 py-0.5 rounded italic">Prenotato</span>}
                             </span>
                           </div>
                         </div>
                         <Button 
                           variant="ghost" 
                           size="icon"
-                          onClick={() => deleteSlot(slot.id)} 
+                          onClick={(e) => {
+                            e.stopPropagation(); // Evita di aprire il popup cliccando solo il cestino
+                            deleteSlot(slot.id);
+                          }} 
                           className="opacity-0 group-hover:opacity-100 hover:bg-red-50 text-red-500 rounded-xl transition-all duration-200 h-12 w-12"
                         >
                           <Trash2 size={20} />
@@ -441,6 +488,62 @@ export default function AdminAvailability() {
           </div>
         </div>
       </div>
+      <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+        <DialogContent className="sm:max-w-[500px] border-none shadow-2xl rounded-3xl bg-white p-0 overflow-hidden">
+          <DialogHeader className="bg-[#006B6B] p-8 text-white">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center">
+                <CalendarIcon size={24} />
+              </div>
+              <div>
+                <DialogTitle className="text-2xl font-black uppercase tracking-tight">Riepilogo Giorno</DialogTitle>
+                <DialogDescription className="text-[#7FCFCF] font-bold uppercase text-xs tracking-widest">
+                  {selectedDayLabel}
+                </DialogDescription>
+              </div>
+            </div>
+          </DialogHeader>
+
+          <div className="p-6 max-h-[60vh] overflow-y-auto custom-scrollbar space-y-3">
+            {viewDaySlots.sort((a, b) => a.start_time.localeCompare(b.start_time)).map((slot) => (
+              <div key={slot.id} className="...">
+                <div className="flex items-center gap-4">
+                  <div className={`w-2 h-8 rounded-full ${slot.is_booked ? 'bg-red-500' : 'bg-[#006B6B]'}`} />
+                  <div>
+                    <span className={`font-black text-lg block leading-none ${slot.is_booked ? 'text-red-700' : 'text-[#006B6B]'}`}>
+                      {format(parseISO(slot.start_time), "HH:mm")} - {format(parseISO(slot.end_time), "HH:mm")}
+                    </span>
+                    
+                    {/* Link Dashboard se prenotato */}
+                    {slot.is_booked ? (
+                      <button 
+                        onClick={() => navigate('/admin/dashboard')}
+                        className="text-[10px] font-bold uppercase text-red-500 underline decoration-red-300 hover:text-red-700 block mt-1"
+                      >
+                        Visualizza dettagli nella Dashboard →
+                      </button>
+                    ) : (
+                      <span className="text-[10px] font-bold uppercase text-[#4A9B9B]">Stato: Libero</span>
+                    )}
+                  </div>
+                </div>
+                <Button onClick={() => deleteSlot(slot.id)}>
+                  <Trash2 size={18} />
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          <div className="p-4 bg-[#F8FAFA] border-t border-[#E8F4F4] flex justify-end">
+            <Button 
+              onClick={() => setIsViewModalOpen(false)}
+              className="bg-[#006B6B] hover:bg-[#4A9B9B] text-white font-bold rounded-xl px-8"
+            >
+              CHIUDI
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { ChevronDown, Menu, X } from 'lucide-react';
 import { UserAuth } from '../context/AuthContext';
-import { useNavigate, useLocation } from 'react-router-dom'; // Aggiunto useLocation
+import { useNavigate, useLocation } from 'react-router-dom';
 
 type NavLink = 
   | { name: string; href: string; hasDropdown?: boolean; isButton?: never; onClick?: never }
@@ -13,10 +13,13 @@ const Navbar = () => {
   
   const { session, signOutUser } = UserAuth() || {};
   const navigate = useNavigate();
-  const location = useLocation(); // Hook per rilevare la rotta attuale
+  const location = useLocation();
 
-  // Verifichiamo se siamo nella Home Page (App.tsx)
   const isHomePage = location.pathname === "/";
+
+  // Controllo admin da .env
+  const adminEmails = import.meta.env.VITE_ADMIN_EMAILS?.split(',') || [];
+  const isAdmin = session?.user?.email && adminEmails.includes(session.user.email);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,28 +34,31 @@ const Navbar = () => {
     navigate('/');
   };
 
-  // ... baseNavLinks e authLink rimangono invariati ...
+  // Funzione per verificare se il link è attivo
+  const isActive = (href: string) => {
+    if (href === '/' || href.startsWith('#')) return isHomePage && location.hash === href.replace('/', '');
+    return location.pathname === href;
+  };
+
   const baseNavLinks: NavLink[] = [
-    { name: 'INIZIO', href: isHomePage ? '#inicio' : '/#inicio' },
+    { name: 'INIZIO', href: isHomePage ? '#inizio' : '/#inizio' },
     { name: 'BLOG', href: isHomePage ? '#blog' : '/#blog' },
-    { name: 'CONTATTO', href: isHomePage ? '#contacto' : '/#contacto' },
+    { name: 'CONTATTO', href: isHomePage ? '#contatto' : '/#contatto' },
     { name: 'PRENOTA', href: '/user/booking' },
   ];
 
   const authLink: NavLink[] = session
     ? [
-        { name: 'DASHBOARD', href: ['sonsycomb@gmail.com', 'abadia@gmail.com'].includes(session.user.email || '') ? '/admin/dashboard' : '/user/dashboard' },
-        { name: ['sonsycomb@gmail.com', 'abadia@gmail.com'].includes(session.user.email || '') ? 'GESTISCI DISPONIBILITÀ' : '', href: ['sonsycomb@gmail.com', 'abadia@gmail.com'].includes(session.user.email || '') ? '/admin/availability' : ''},
-        { name: 'PRENOTAZIONI', href: '/user/booking' },
+        { 
+          name: 'ZONA PERSONALE', 
+          href: isAdmin ? '/admin' : '/user/dashboard' 
+        },
         { name: 'LOGOUT', href: '#', isButton: true, onClick: handleLogout },
       ]
     : [{ name: 'LOGIN/REGISTRATI', href: '/signup' }];
 
   const navLinks: NavLink[] = [...baseNavLinks, ...authLink];
 
-  // Logica per determinare lo sfondo:
-  // Se NON è la home, è SEMPRE colorata.
-  // Se è la home, è colorata SOLO se isScrolled è true.
   const shouldBeColored = !isHomePage || isScrolled;
 
   return (
@@ -93,7 +99,9 @@ const Navbar = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className="text-xs font-medium tracking-wider transition-colors hover:text-[#7FCFCF] flex items-center gap-1 text-white"
+                  className={`text-xs font-medium tracking-wider transition-colors hover:text-[#7FCFCF] flex items-center gap-1 ${
+                    isActive(link.href) ? 'text-[#7FCFCF] border-b border-[#7FCFCF]' : 'text-white'
+                  }`}
                 >
                   {link.name}
                   {link.hasDropdown && <ChevronDown className="w-3 h-3" />}
@@ -130,7 +138,9 @@ const Navbar = () => {
                 <a
                   key={index}
                   href={link.href}
-                  className="block px-4 py-3 text-sm font-medium text-white hover:bg-[#4A9B9B] hover:text-[#7FCFCF] transition-colors"
+                  className={`block px-4 py-3 text-sm font-medium transition-colors ${
+                    isActive(link.href) ? 'text-[#7FCFCF] bg-[#4A9B9B]' : 'text-white hover:bg-[#4A9B9B] hover:text-[#7FCFCF]'
+                  }`}
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   {link.name}

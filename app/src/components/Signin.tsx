@@ -174,6 +174,18 @@ const Signin = () => {
             </Button>
           </form>
 
+          <div className="mt-6 text-center">
+            <p className="text-sm text-[#006B6B]/70 font-medium">
+              Non hai un account?{' '}
+              <button 
+                onClick={() => navigate('/signup')}
+                className="text-[#006B6B] hover:text-[#4A9B9B] font-bold underline transition-colors"
+              >
+                Registrati
+              </button>
+            </p>
+          </div>
+
           {/* Error Message */}
           {error && (
             <div className="mt-6 p-4 bg-red-100 text-red-700 rounded-md text-sm">

@@ -9,13 +9,14 @@ import { format, parseISO, isAfter } from "date-fns";
 import { it } from "date-fns/locale";
 import { 
   Clock, CalendarCheck, History, Edit3, Save, X, 
-  ChevronDown, AlertCircle, Loader2, Upload, Trash2, FileText 
+  ChevronDown, AlertCircle, Loader2, Upload, Trash2, FileText, MapPin, Download
 } from "lucide-react";
 
 export default function UserDashboard() {
   const [appointments, setAppointments] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
+  const [isViewModalOpen, setIsViewModalOpen] = useState(false);
   
   const [openSections, setOpenSections] = useState({
     confirmed: true,
@@ -174,27 +175,31 @@ export default function UserDashboard() {
                   <p className="text-[#4A9B9B] font-bold">Nessun appuntamento confermato</p>
                 </div>
               ) : (
-                confirmed.map(app => (
-                  <Card 
-                    key={app.id} 
-                    className="border-2 border-[#006B6B]/20 bg-white p-6 rounded-2xl shadow-lg shadow-[#006B6B]/5 hover:shadow-xl transition-all duration-300"
-                  >
-                    <div className="flex justify-between items-center">
-                      <div className="space-y-1">
-                        <p className="text-2xl font-black text-[#006B6B] uppercase">
-                          {format(parseISO(app.availability.start_time), "EEEE dd MMMM", { locale: it })}
-                        </p>
-                        <p className="text-lg font-bold text-[#4A9B9B]">
-                          {format(parseISO(app.availability.start_time), "HH:mm")} - {format(parseISO(app.availability.end_time), "HH:mm")}
-                        </p>
-                      </div>
+              confirmed.map(app => (
+                <Card 
+                  key={app.id} 
+                  // AGGIUNGI QUESTO:
+                  onClick={() => { setSelectedApp(app); setIsViewModalOpen(true); }}
+                  className="border-2 border-[#006B6B]/20 bg-white p-6 rounded-2xl shadow-lg shadow-[#006B6B]/5 hover:shadow-xl hover:border-[#006B6B]/40 transition-all duration-300 cursor-pointer group"
+                >
+                  <div className="flex justify-between items-center">
+                    <div className="space-y-1">
+                      <p className="text-2xl font-black text-[#006B6B] uppercase group-hover:text-[#4A9B9B] transition-colors">
+                        {format(parseISO(app.availability.start_time), "EEEE dd MMMM", { locale: it })}
+                      </p>
+                      <p className="text-lg font-bold text-[#4A9B9B]">
+                        {format(parseISO(app.availability.start_time), "HH:mm")} - {format(parseISO(app.availability.end_time), "HH:mm")}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-4">
                       <div className="bg-green-100 text-green-600 px-4 py-2 rounded-full font-black text-sm uppercase flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-green-500" />
                         Confermato
                       </div>
                     </div>
-                  </Card>
-                ))
+                  </div>
+                </Card>
+              ))
               )}
             </div>
           )}
@@ -417,6 +422,87 @@ export default function UserDashboard() {
               <Trash2 className="mr-2" size={20} />
               Elimina Richiesta
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal Resoconto (Visualizzazione) */}
+      <Dialog open={isViewModalOpen} onOpenChange={setIsViewModalOpen}>
+        <DialogContent className="max-w-2xl border-none rounded-3xl bg-white p-0 shadow-2xl overflow-hidden">
+          {/* Header */}
+          <div className="bg-gradient-to-r from-[#006B6B] to-[#4A9B9B] p-8 text-white flex justify-between items-center">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-white/20 flex items-center justify-center">
+                <CalendarCheck size={28} />
+              </div>
+              <div>
+                <h3 className="text-3xl font-black uppercase tracking-tight">Dettagli Visita</h3>
+                <p className="text-sm font-bold opacity-80">Riepilogo appuntamento confermato</p>
+              </div>
+            </div>
+            <button 
+              onClick={() => setIsViewModalOpen(false)}
+              className="w-12 h-12 rounded-full bg-white/20 hover:bg-white/30 flex items-center justify-center transition-colors"
+            >
+              <X size={24} />
+            </button>
+          </div>
+
+          <div className="p-8 space-y-6">
+            {/* Data e Ora */}
+            <div className="bg-[#E8F4F4] p-6 rounded-2xl border-l-8 border-[#006B6B]">
+              <label className="text-xs font-black text-[#006B6B] uppercase tracking-wider mb-2 block">Data e Orario</label>
+              <p className="text-3xl font-black text-[#006B6B] uppercase leading-none">
+                {selectedApp && format(parseISO(selectedApp.availability.start_time), "EEEE dd MMMM", { locale: it })}
+              </p>
+              <p className="text-xl font-bold text-[#4A9B9B] mt-2 italic">
+                dalle {selectedApp && format(parseISO(selectedApp.availability.start_time), "HH:mm")} alle {selectedApp && format(parseISO(selectedApp.availability.end_time), "HH:mm")}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Note inviate */}
+              <div className="space-y-2">
+                <label className="text-xs font-black text-[#4A9B9B] uppercase tracking-wider flex items-center gap-2">
+                  <FileText size={14} /> Le tue note
+                </label>
+                <div className="p-4 bg-gray-50 rounded-xl border-2 border-gray-100 italic text-[#006B6B] font-medium min-h-[100px]">
+                  "{selectedApp?.notes || "Nessuna nota inserita"}"
+                </div>
+              </div>
+
+              {/* Posizione (Se presente) */}
+              <div className="space-y-2">
+                <label className="text-xs font-black text-[#4A9B9B] uppercase tracking-wider flex items-center gap-2">
+                  <MapPin size={14} /> Luogo della visita
+                </label>
+                <div className="p-4 bg-gray-50 rounded-xl border-2 border-gray-100 text-[#006B6B] font-bold">
+                  {selectedApp?.location || "L'indirizzo verrà confermato a breve"}
+                </div>
+              </div>
+            </div>
+
+            {/* Documento allegato */}
+            {selectedApp?.document_url && (
+              <div className="pt-4">
+                <Button 
+                  onClick={() => {
+                    const url = supabase.storage.from("appointment-documents").getPublicUrl(selectedApp.document_url).data.publicUrl;
+                    window.open(url, "_blank");
+                  }}
+                  className="w-full bg-[#E8F4F4] hover:bg-[#006B6B] text-[#006B6B] hover:text-white border-2 border-[#006B6B] font-black text-lg py-6 rounded-2xl transition-all"
+                >
+                  <Download className="mr-2" size={20} />
+                  Scarica Documentazione Allegata
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <div className="p-6 bg-gray-50 text-center border-t border-gray-100">
+            <p className="text-xs font-bold text-gray-400 uppercase">
+              Per modifiche urgenti contatta direttamente il fisioterapista.
+            </p>
           </div>
         </DialogContent>
       </Dialog>

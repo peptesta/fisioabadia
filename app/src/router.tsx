@@ -6,7 +6,10 @@ import AdminAvailability from "./components/AdminAvailability";
 import BookingCalendar from "./components/BookingCalendar";
 import AdminDashboard from "./components/AdminDashboard";
 import UserDashboard from "./components/UserDashboard";
-import MainLayout from "./MainLayout"; // Importa il nuovo Layout
+import MainLayout from "./MainLayout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import ProtectedAdminRoute from "./components/ProtectedAdminRoute";
+import AdminHub from "./components/AdminHub";
 
 export const router = createBrowserRouter([
     {
@@ -14,10 +17,21 @@ export const router = createBrowserRouter([
         element: <MainLayout />, 
         children: [
             { path: "/", element: <App /> },
-            { path: "/admin/availability", element: <AdminAvailability /> },
-            { path: "/admin/dashboard", element: <AdminDashboard /> },
-            { path: "/user/booking", element: <BookingCalendar /> },
-            { path: "/user/dashboard", element: <UserDashboard /> },
+            {
+                element: <ProtectedAdminRoute />, // Protegge tutte le rotte figlie
+                children: [
+                    { path: "/admin", element: <AdminHub /> },
+                    { path: "/admin/availability", element: <AdminAvailability /> },
+                    { path: "/admin/dashboard", element: <AdminDashboard /> },
+                ]
+            },
+            {
+                element: <ProtectedRoute />,
+                children: [
+                    { path: "/user/booking", element: <BookingCalendar /> },
+                    { path: "/user/dashboard", element: <UserDashboard /> },
+                ]
+            }
         ]
     },
     // Rotte che NON vogliono la Navbar (es. Login e Register)

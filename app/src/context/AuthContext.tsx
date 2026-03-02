@@ -5,6 +5,7 @@ import type { Session } from '@supabase/supabase-js';
 
 interface AuthContextType {
     session: Session | null;
+    loading: boolean;
     signUpNewUser: (email: string, password: string, options?: { data?: object }) => Promise<{ success: boolean; error?: any; data?: any }>;
     signOutUser: () => Promise<void>;
     signInUser: (email: string, password: string) => Promise<{ success: boolean; error?: any; data?: any }>;
@@ -14,56 +15,88 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthContextProvider = ({ children }: { children: ReactNode }) => {
     const [session, setSession] = useState<Session | null >(null)
+    const [loading, setLoading] = useState<boolean>(true)
 
     const signUpNewUser = async (email: string, password: string, options?: { data?: object }) => {
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: options?.data || {}
+        try {
+            setLoading(true);
+
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    data: options?.data || {}
+                }
+            });
+
+            if (error) {
+                console.error('Errore durante la registrazione:', error.message);
+                return { success: false, error };
             }
-        })
-        if (error) {
-            console.error('Errore durante la registrazione:', error.message);
-            return { success: false, error };
+
+            return { success: true, data };
+        } finally {
+            setLoading(false);
         }
-        return { success: true, data };
-    }
+    };
 
     const signInUser = async (email: string, password: string) => {
-        const { data, error } = await supabase.auth.signInWithPassword({
-            email,
-            password,
-        })
-        if (error) {
-            console.error('Errore durante il login:', error.message);
-            return { success: false, error };
+        try {
+            setLoading(true);
+
+            const { data, error } = await supabase.auth.signInWithPassword({
+                email,
+                password,
+            });
+
+            if (error) {
+                console.error('Errore durante il login:', error.message);
+                return { success: false, error };
+            }
+
+            return { success: true, data };
+        } finally {
+            setLoading(false); // 👈 sempre eseguito
         }
-        console.log('Dati di login:', data);
-        return { success: true, data };
-    }
+    };
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session)
-        })
+        const getInitialSession = async () => {
+            const { data: { session } } = await supabase.auth.getSession();
+            setSession(session);
+            setLoading(false); 
+        };
 
-        supabase.auth.onAuthStateChange((_event, session) => {
-            setSession(session)
-        })
-    }, [])
+        getInitialSession();
+
+        const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+            setSession(session);
+            setLoading(false);
+        });
+
+        return () => {
+            listener.subscription.unsubscribe();
+        };
+    }, []);
 
     const signOutUser = async () => {
-        const { error } = await supabase.auth.signOut();
-        if (error) {
-            console.error('Errore durante il logout:', error.message);
-        } else {
-            setSession(null);
+        try {
+            setLoading(true);
+
+            const { error } = await supabase.auth.signOut();
+
+            if (error) {
+                console.error('Errore durante il logout:', error.message);
+            } else {
+                setSession(null);
+            }
+        } finally {
+            setLoading(false);
         }
-    }
+    };
 
     return (
-        <AuthContext.Provider value={{ session, signUpNewUser, signOutUser, signInUser }}>
+        <AuthContext.Provider value={{ session, loading, signUpNewUser, signOutUser, signInUser }}>
             {children}
         </AuthContext.Provider>
     )

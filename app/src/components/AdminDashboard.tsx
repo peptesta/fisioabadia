@@ -82,6 +82,39 @@ const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
     }
     };
 
+    const cancelAppointment = async (appId: number, availId: number) => {
+  const confirmCancel = window.confirm(
+    "Sei sicuro di voler cancellare questa prenotazione? Lo slot tornerà disponibile per altri pazienti."
+  );
+
+  if (!confirmCancel) return;
+
+  try {
+    // 1. Eliminiamo l'appuntamento (o potresti fare un update status = 'cancelled')
+    const { error: appError } = await supabase
+      .from("appointments")
+      .delete()
+      .eq("id", appId);
+
+    if (appError) throw appError;
+
+    // 2. Liberiamo lo slot nel calendario
+    const { error: availError } = await supabase
+      .from("availability")
+      .update({ is_booked: false })
+      .eq("id", availId);
+
+    if (availError) throw availError;
+
+    toast.success("Prenotazione cancellata e slot liberato!");
+    setIsDetailsOpen(false);
+    fetchData(); // Ricarica i dati
+  } catch (error) {
+    toast.error("Errore durante la cancellazione");
+    console.error(error);
+  }
+};
+
   const handleAction = async (appId: number, availId: number, status: 'confirmed' | 'rejected') => {
     await supabase.from("appointments").update({ status }).eq("id", appId);
     if (status === 'confirmed') await supabase.from("availability").update({ is_booked: true }).eq("id", availId);
@@ -151,37 +184,50 @@ const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
                   <p className="text-[#4A9B9B] font-bold text-lg">Nessuna richiesta in attesa</p>
                 </div>
               ) : (
-                requests.map(app => (
-                  <Card 
-                    key={app.id} 
-                    className="border-2 border-[#4A9B9B]/20 bg-white p-6 rounded-2xl shadow-lg shadow-[#006B6B]/5 hover:shadow-xl hover:border-[#4A9B9B]/40 transition-all duration-300 group"
-                  >
-                    <div className="flex justify-between items-start gap-4">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-xl font-black text-[#006B6B] uppercase truncate leading-tight">
-                          {app.profiles.full_name}
-                        </h3>
-                        <div className="flex items-center gap-2 mt-2 text-[#4A9B9B] font-bold">
-                          <Clock size={16} />
-                          <span>{format(parseISO(app.availability.start_time), "dd MMM - HH:mm", { locale: it })}</span>
-                        </div>
-                      </div>
-                      <div className="flex gap-2 shrink-0">
-                        <Button 
-                          onClick={() => handleAction(app.id, app.availability.id, 'confirmed')} 
-                          className="bg-green-500 hover:bg-green-600 text-white rounded-xl h-12 w-12 shadow-lg shadow-green-500/20 transition-all hover:scale-110"
-                        >
-                          <Check size={20} />
-                        </Button>
-                        <Button 
-                          onClick={() => handleAction(app.id, app.availability.id, 'rejected')} 
-                          className="bg-red-500 hover:bg-red-600 text-white rounded-xl h-12 w-12 shadow-lg shadow-red-500/20 transition-all hover:scale-110"
-                        >
-                          <X size={20} />
-                        </Button>
+              requests.map(app => (
+                <Card 
+                  key={app.id} 
+                  onClick={() => { 
+                    setSelectedApp(app); 
+                    setEditLocation(app.location || ""); 
+                    setIsDetailsOpen(true); 
+                  }}
+                  className="border-2 border-[#4A9B9B]/20 bg-white p-6 rounded-2xl shadow-lg shadow-[#006B6B]/5 hover:shadow-xl hover:border-[#006B6B]/40 transition-all duration-300 group cursor-pointer"
+                >
+                  <div className="flex justify-between items-start gap-4">
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-xl font-black text-[#006B6B] uppercase truncate leading-tight group-hover:text-[#4A9B9B] transition-colors">
+                        {app.profiles.full_name}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-2 text-[#4A9B9B] font-bold">
+                        <Clock size={16} />
+                        <span>{format(parseISO(app.availability.start_time), "dd MMM - HH:mm", { locale: it })}</span>
                       </div>
                     </div>
-                  </Card>
+                    
+                    {/* Azioni rapide: usiamo stopPropagation per evitare di aprire il modal se clicchi i pulsanti */}
+                    <div className="flex gap-2 shrink-0">
+                      <Button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAction(app.id, app.availability.id, 'confirmed');
+                        }} 
+                        className="bg-green-500 hover:bg-green-600 text-white rounded-xl h-12 w-12 shadow-lg shadow-green-500/20 transition-all hover:scale-110"
+                      >
+                        <Check size={20} />
+                      </Button>
+                      <Button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleAction(app.id, app.availability.id, 'rejected');
+                        }} 
+                        className="bg-red-500 hover:bg-red-600 text-white rounded-xl h-12 w-12 shadow-lg shadow-red-500/20 transition-all hover:scale-110"
+                      >
+                        <X size={20} />
+                      </Button>
+                    </div>
+                  </div>
+                </Card>
                 ))
               )}
             </div>
@@ -198,7 +244,7 @@ const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
             <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center">
                 <FileText size={24} />
             </div>
-            <span>Storico Visite</span>
+            <span>Visualizza Visite</span>
             </div>
             <div className={`transform transition-transform duration-300 ${showHistory ? 'rotate-180' : ''}`}>
             <ChevronDown size={32} />
@@ -644,6 +690,23 @@ const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
                 </div>
               </div>
             </div>
+            {/* Azione di Cancellazione per appuntamenti già CONFERMATI */}
+            {selectedApp?.status === 'confirmed' && (
+              <div className="p-8 bg-red-50 border-t-2 border-red-100 mt-4 rounded-3xl">
+                <div className="flex flex-col gap-4">
+                  <Button 
+                    onClick={() => cancelAppointment(selectedApp.id, selectedApp.availability.id)}
+                    className="w-full bg-white hover:bg-red-600 border-2 border-red-500 text-red-500 hover:text-white font-black h-14 rounded-2xl transition-all shadow-lg shadow-red-500/10"
+                  >
+                    <X className="mr-2" size={20} />
+                    CANCELLA PRENOTAZIONE
+                  </Button>
+                  <p className="text-[10px] text-red-400 text-center font-bold uppercase">
+                    L'operazione libererà immediatamente l'orario sul sito pubblico
+                  </p>
+                </div>
+              </div>
+            )}
           </div>
         </DialogContent>
       </Dialog>
